@@ -1,12 +1,12 @@
 CC     = arm-none-eabi-gcc
-CFLAGS = -Wall -Wextra -O3 -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16
+CFLAGS = -Wall -Wextra -O3 -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16 -std=c11
 AR     = arm-none-eabi-gcc-ar
 
 CC_HOST = gcc
 CC_CLFAGS = -Wall -Wextra -O3
 AR_HOST = gcc-ar
 
-OBJECTS= sign.o consts.o sample.o poly.o  
+OBJECTS= sign.o consts.o sample.o poly.o
 HEADERS= api.h params.h sample.h poly.h
 OBJECTS_HOST = $(patsubst %.o,%_host.o,$(OBJECTS))
 
@@ -31,4 +31,3 @@ clean:
 	-rm -f libpqhost.a
 	-rm -f libpqm4.a
 	-rm -f *.o
-
