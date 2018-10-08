@@ -3,10 +3,10 @@
 
 #include <stdint.h>
 
-#define LIMBS 8
+#define LIMBS 16
 
-typedef struct uint { uint64_t c[LIMBS]; } uint;
-typedef struct fp { uint64_t c[LIMBS]; } fp;
+typedef struct uint { uint32_t c[LIMBS]; } uint;
+typedef struct fp { uint32_t c[LIMBS]; } fp;
 typedef struct proj { struct fp x, z; } proj;
 
 #define NUM_PRIMES 74

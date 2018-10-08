@@ -137,7 +137,7 @@ bool fp_issquare(fp *x)
 void fp_random(fp *x)
 {
     while (1) {
-        randombytes(x, sizeof(fp));
+        randombytes_mask(x, sizeof(fp));
         uint64_t m = ((uint64_t) 1 << pbits % 64) - 1;
         x->c[LIMBS - 1] &= m;
 

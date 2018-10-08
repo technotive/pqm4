@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
-void randombytes(void *x, size_t l)
+void randombytes_mask(void *x, size_t l)
 {
     static int fd = -1;
     ssize_t n;

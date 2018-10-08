@@ -6,6 +6,7 @@
 #include "uint.h"
 #include "fp.h"
 #include "m4.h"
+#include "rng.h"
 
 void fp_set(fp *x, uint32_t y)
 {
@@ -57,7 +58,7 @@ void fp_dec(uint *x, fp const *y)
 
 void fp_mul3(fp *x, fp const *y, fp const *z)
 {
-    uint64_t t[LIMBS + 1] = {0};
+    uint32_t t[LIMBS + 1] = {0};
     for (size_t k = 0; k < LIMBS; ++k) {
 #define r(i) t[(k + (i)) % (LIMBS + 1)]
 
@@ -136,7 +137,7 @@ bool fp_issquare(fp *x)
 void fp_random(fp *x)
 {
     while (1) {
-        randombytes(x, sizeof(fp));
+        randombytes_mask(x, sizeof(fp));
         uint32_t m = ((uint32_t) 1 << pbits % 32) - 1;
         x->c[LIMBS - 1] &= m;
 

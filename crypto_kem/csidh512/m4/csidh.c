@@ -6,6 +6,7 @@
 #include "fp.h"
 #include "mont.h"
 #include "csidh.h"
+#include "rng.h"
 
 const public_key base = {0}; /* A = 0 */
 
@@ -16,7 +17,7 @@ void csidh_private(private_key *priv)
     memset(&priv->e, 0, sizeof(priv->e));
     for (size_t i = 0; i < NUM_PRIMES; ) {
         int8_t buf[64];
-        randombytes(buf, sizeof(buf));
+        randombytes_mask(buf, sizeof(buf));
         for (size_t j = 0; j < sizeof(buf); ++j) {
             if (buf[j] <= MAX_EXPONENT && buf[j] >= -MAX_EXPONENT) {
                 priv->e[i / 2] |= (buf[j] & 0xf) << i % 2 * 4;
