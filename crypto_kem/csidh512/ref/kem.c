@@ -1,7 +1,11 @@
 #include "api.h"
 #include "randombytes.h"
+#include "csidh.h"
 
 int crypto_kem_keypair(unsigned char *pk, unsigned char *sk){
+  csidh_private((private_key*) sk);
+  pk = (unsigned char*) &base;
+  (void) pk; //Suppress pk not used
   return 0;
 }
 

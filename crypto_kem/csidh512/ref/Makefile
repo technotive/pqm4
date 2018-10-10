@@ -6,7 +6,7 @@ AR 			= gcc-ar
 
 OBJECTS 			 = constants.o mont.o csidh.o uint.o fp.o kem.o
 
-libpqm4.a: $(OBJECTS)
+libpqhost.a: $(OBJECTS)
 	$(AR) rcs $@ $(OBJECTS)
 
 %.o: %.c $(HEADERS)
