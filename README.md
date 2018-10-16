@@ -152,7 +152,7 @@ executions is reported in parantheses.
 | scheme | implementation | key generation [cycles] | encapsulation [cycles] | decapsulation [cycles] |
 | ------ | -------------- | ----------------------- | ---------------------- | -----------------------|
 | frodo640-cshake (10 executions) | opt | AVG: 94,191,951 <br /> MIN: 94,191,921 <br /> MAX: 94,192,027 |  AVG: 111,688,861 <br /> MIN: 111,688,796 <br /> MAX: 111,688,895 | AVG: 112,156,317 <br /> MIN: 112,156,264 <br /> MAX: 112,156,389 |
-| kindi256342 (10 executions) | ref | AVG: 22,940,741 <br /> MIN: 22,928,176 <br /> MAX: 22,947,668 |  AVG: 29,659,234 <br /> MIN: 29,645,532 <br /> MAX: 29,674,037 | AVG: 37,821,962 <br /> MIN: 37,805,302 <br /> MAX: 37,840,627 |
+| kindi256342 (10 executions) | ref | AVG: 21,793,959 <br /> MIN: 21,784,358 <br /> MAX: 21,803,111 |  AVG: 28,172,479 <br /> MIN: 28,155,635 <br /> MAX: 28,183,740 | AVG: 37,125,697 <br /> MIN: 37,105,911 <br /> MAX: 37,138,137 |
 | kyber768 (10 executions) | m4 | AVG: 1,200,351 <br /> MIN: 1,199,831 <br /> MAX: 1,200,671 |  AVG: 1,497,789 <br /> MIN: 1,497,296 <br /> MAX: 1,498,094 | AVG: 1,526,564 <br /> MIN: 1,526,070 <br /> MAX: 1,526,868 |
 | kyber768 (10 executions) | ref | AVG: 1,379,979 <br /> MIN: 1,379,339 <br /> MAX: 1,380,339 |  AVG: 1,797,604 <br /> MIN: 1,796,996 <br /> MAX: 1,797,947 | AVG: 1,950,350 <br /> MIN: 1,949,742 <br /> MAX: 1,950,693 |
 | newhope1024cca (10 executions) | ref | AVG: 1,502,435 <br /> MIN: 1,502,179 <br /> MAX: 1,502,707 |  AVG: 2,370,157 <br /> MIN: 2,369,901 <br /> MAX: 2,370,429 | AVG: 2,517,215 <br /> MIN: 2,516,959 <br /> MAX: 2,517,488 |
@@ -160,7 +160,7 @@ executions is reported in parantheses.
 | ntruhrss701 (10 executions) | ref | AVG: 197,262,297 <br /> MIN: 197,261,894 <br /> MAX: 197,262,845 |  AVG: 5,166,153 <br /> MIN: 5,166,153 <br /> MAX: 5,166,155 | AVG: 15,069,480 <br /> MIN: 15,069,478 <br /> MAX: 15,069,485 |
 | saber (10 executions) | ref | AVG: 7,122,695 <br /> MIN: 7,122,695 <br /> MAX: 7,122,695 |  AVG: 9,470,634 <br /> MIN: 9,470,634 <br /> MAX: 9,470,634 | AVG: 12,303,775 <br /> MIN: 12,303,775 <br /> MAX: 12,303,775 |
 | sikep751 (1 executions) | ref | AVG: 3,508,587,555 <br /> MIN: 3,508,587,555 <br /> MAX: 3,508,587,555 |  AVG: 5,685,591,898 <br /> MIN: 5,685,591,898 <br /> MAX: 5,685,591,898 | AVG: 6,109,763,845 <br /> MIN: 6,109,763,845 <br /> MAX: 6,109,763,845 |
-| sntrup4591761 (10 executions) | ref | AVG: 147,543,618 <br /> MIN: 147,543,618 <br /> MAX: 147,543,618 |  AVG: 10,631,675 <br /> MIN: 10,631,675 <br /> MAX: 10,631,675 | AVG: 30,641,200 <br /> MIN: 30,641,200 <br /> MAX: 30,641,200 |
+| sntrup4591761 (10 executions) | ref | AVG: 145,371,484 <br /> MIN: 145,371,484 <br /> MAX: 145,371,484 |  AVG: 10,331,556 <br /> MIN: 10,331,556 <br /> MAX: 10,331,556 | AVG: 30,335,175 <br /> MIN: 30,335,175 <br /> MAX: 30,335,175 |
 #### Signature Schemes
 | scheme | implementation | key generation [cycles] | sign [cycles] | verify [cycles] |
 | ------ | -------------- | ----------------------- | ------------- | ----------------|
@@ -174,7 +174,7 @@ executions is reported in parantheses.
 | scheme | implementation | key generation [bytes] | encapsulation [bytes] | decapsulation [bytes] |
 | ------ | -------------- | ----------------------- | ---------------------- | -----------------------|
 | frodo640-cshake | opt | 36,536 |  58,328 | 68,680 |
-| kindi256342 | ref | 10,632 |  10,736 | 16,912 |
+| kindi256342 | ref | 59,864 | 71,000 | 83,336 |
 | kyber768 | m4 | 10,304 |  13,464 | 14,624 |
 | kyber768 | ref | 10,304 |  13,464 | 14,624 |
 | newhope1024cca | m4 | 11,160 |  17,456 | 19,656 |
@@ -182,7 +182,7 @@ executions is reported in parantheses.
 | ntruhrss701 | ref | 10,024 |  8,996 | 10,244 |
 | saber | ref | 12,616 |  14,888 | 15,984 |
 | sikep751 | ref | 11,128 |  11,672 | 12,224 |
-| sntrup4591761 | ref | 14,648 |  10,824 | 16,176 |
+| sntrup4591761 | ref | 14,608 |  7,264 | 12,544 |
 #### Signature Schemes
 | scheme | implementation | key generation [bytes] | sign [bytes] | verify [bytes] |
 | ------ | -------------- | ----------------------- | ------------- | ----------------|
@@ -281,6 +281,34 @@ new subdirectory under `crypto_sign/`.
    The API for `shake256` and `shake512` is very similar, except that it supports variable-length output.
    The SHAKE and cSHAKE functions are also accessible via the absorb-squeezeblocks functions, which offer incremental
    output generation (but not incremental input handling).
+
+## Using optimised SHA512
+
+  Some schemes submitted to NIST make use of SHA512 for hashing.
+  We've experimented with assembly-optimised SHA512, but found that the speed-up
+  achievable with this compared to the C implementation from
+  [SUPERCOP](http://bench.cr.yp.to/) is negligible
+  when compiled using `arm-none-eabi-gcc-8.2.0`.
+  For older compiler versions (e.g. `5.4.1`) hand-optimised assembly implementations
+  were significantly faster.
+  We've therefore decided to only include a C version of SHA512.
+  The available functions are:
+   ```c
+  int crypto_hash_sha512(unsigned char *out,const unsigned char *in,unsigned long long inlen);
+   ```
+  Implementations can make use of this by including `crypto_hash_sha512.h`.
+
+## Bibliography
+
+When referring to this framework in academic literature, please consider using the following bibTeX excerpt:
+
+```
+@misc{PQM4,
+  title = {{PQM4}: Post-quantum crypto library for the {ARM} {Cortex-M4}},
+  author = {Matthias J. Kannwischer and Joost Rijneveld and Peter Schwabe and Ko Stoffelen},
+  note = {\url{https://github.com/mupq/pqm4}}
+}
+```
 
 ## License
 Different parts of **pqm4** have different licenses. Specifically,

@@ -12,7 +12,7 @@ GDB         = $(PREFIX)-gdb
 
 ARCH_FLAGS  = -mthumb -mcpu=cortex-m4 -mfloat-abi=hard -mfpu=fpv4-sp-d16
 DEFINES     = -DSTM32F4
-OBJS        = obj/stm32f4_wrapper.o obj/fips202.o obj/keccakf1600.o
+OBJS        = obj/stm32f4_wrapper.o obj/fips202.o obj/keccakf1600.o obj/crypto_hash_sha512.o
 RANDOMBYTES = obj/randombytes.o
 
 CFLAGS     += -O3 \
@@ -32,33 +32,40 @@ LD_HOST    = gcc
 CFLAGS_HOST = -O3 -Wall -Wextra -Wpedantic
 LDFLAGS_HOST =
 
-OBJS_HOST  = obj-host/fips202.o obj-host/keccakf1600.o
+OBJS_HOST  = obj-host/fips202.o obj-host/keccakf1600.o obj-host/crypto_hash_sha512.o
 
-KEMLIBS=$(wildcard crypto_kem/*/*)
-SIGNLIBS=$(wildcard crypto_sign/*/*)
+KEMS=$(wildcard crypto_kem/*/*)
+SIGNS=$(wildcard crypto_sign/*/*)
 
-# specifically select the ref implementations to use these as 'canonical'
-# to prevent having duplicate targets, append _host
-KEMLIBS_REF=$(wildcard crypto_kem/*/ref)
-SIGNLIBS_REF=$(wildcard crypto_sign/*/ref)
-KEMLIBS_M4=$(filter-out crypto_kem/%/ref, $(KEMLIBS))
-SIGNLIBS_M4=$(filter-out crypto_sign/%/ref, $(SIGNLIBS))
-
-KEMTESTS=$(patsubst %,bin/%,$(patsubst %,%_test.bin,$(subst /,_,$(KEMLIBS))))
-SIGNTESTS=$(patsubst %,bin/%,$(patsubst %,%_test.bin,$(subst /,_,$(SIGNLIBS))))
-
-KEMTESTVECTORS=$(patsubst %,bin/%,$(patsubst %,%_testvectors.bin,$(subst /,_,$(KEMLIBS))))
-SIGNTESTVECTORS=$(patsubst %,bin/%,$(patsubst %,%_testvectors.bin,$(subst /,_,$(SIGNLIBS))))
+# filter the targets that cannot be built on the M4
+define filter_m4ignore
+    $(filter-out $(patsubst %/.m4ignore,%,$(wildcard $(addsuffix /.m4ignore, $(1)))),$(1))
+endef
 
 # on the host, we are only interested in the reference implementations
-KEMTESTVECTORS_HOST=$(patsubst %,bin-host/%,$(patsubst %,%_testvectors,$(subst /,_,$(KEMLIBS_REF))))
-SIGNTESTVECTORS_HOST=$(patsubst %,bin-host/%,$(patsubst %,%_testvectors,$(subst /,_,$(SIGNLIBS_REF))))
+KEMS_HOST=$(wildcard crypto_kem/*/ref)
+SIGNS_HOST=$(wildcard crypto_sign/*/ref)
+# on the M4, anything that compiles is a valid target
+KEMS_M4=$(call filter_m4ignore, $(KEMS))
+SIGNS_M4=$(call filter_m4ignore, $(SIGNS))
 
-KEMSPEEDS=$(patsubst %,bin/%,$(patsubst %,%_speed.bin,$(subst /,_,$(KEMLIBS))))
-SIGNSPEEDS=$(patsubst %,bin/%,$(patsubst %,%_speed.bin,$(subst /,_,$(SIGNLIBS))))
+KEMTESTS=$(patsubst %,bin/%,$(patsubst %,%_test.bin,$(subst /,_,$(KEMS_M4))))
+SIGNTESTS=$(patsubst %,bin/%,$(patsubst %,%_test.bin,$(subst /,_,$(SIGNS_M4))))
 
-KEMSTACK=$(patsubst %,bin/%,$(patsubst %,%_stack.bin,$(subst /,_,$(KEMLIBS))))
-SIGNSTACK=$(patsubst %,bin/%,$(patsubst %,%_stack.bin,$(subst /,_,$(SIGNLIBS))))
+KEMTESTVECTORS=$(patsubst %,bin/%,$(patsubst %,%_testvectors.bin,$(subst /,_,$(KEMS_M4))))
+SIGNTESTVECTORS=$(patsubst %,bin/%,$(patsubst %,%_testvectors.bin,$(subst /,_,$(SIGNS_M4))))
+
+KEMTESTVECTORS_HOST=$(patsubst %,bin-host/%,$(patsubst %,%_testvectors,$(subst /,_,$(KEMS_HOST))))
+SIGNTESTVECTORS_HOST=$(patsubst %,bin-host/%,$(patsubst %,%_testvectors,$(subst /,_,$(SIGNS_HOST))))
+
+KEMSPEEDS=$(patsubst %,bin/%,$(patsubst %,%_speed.bin,$(subst /,_,$(KEMS_M4))))
+SIGNSPEEDS=$(patsubst %,bin/%,$(patsubst %,%_speed.bin,$(subst /,_,$(SIGNS_M4))))
+
+KEMSTACK=$(patsubst %,bin/%,$(patsubst %,%_stack.bin,$(subst /,_,$(KEMS_M4))))
+SIGNSTACK=$(patsubst %,bin/%,$(patsubst %,%_stack.bin,$(subst /,_,$(SIGNS_M4))))
+
+LIBS_M4=$(addsuffix /libpqm4.a,$(KEMS_M4)) $(addsuffix /libpqm4.a,$(SIGNS_M4))
+LIBS_HOST=$(addsuffix /libpqhost.a,$(KEMS_HOST)) $(addsuffix /libpqhost.a,$(SIGNS_HOST))
 
 OWNDIR=$(shell pwd)
 INCPATH=$(OWNDIR)/common
@@ -66,7 +73,7 @@ INCPATH=$(OWNDIR)/common
 
 all: tests testvectors speeds stack
 
-libs: $(KEMLIBS_M4) $(SIGNLIBS_M4) $(KEMLIBS_REF) $(SIGNLIBS_REF)
+libs: $(LIBS_M4) $(LIBS_HOST)
 tests: libs $(KEMTESTS) $(SIGNTESTS)
 testvectors: libs $(KEMTESTVECTORS) $(SIGNTESTVECTORS) $(KEMTESTVECTORS_HOST) $(SIGNTESTVECTORS_HOST)
 speeds: libs $(KEMSPEEDS) $(SIGNSPEEDS)
@@ -81,19 +88,11 @@ export INCPATH
 #  be constantly rebuilt. Suggestions welcome how to fix this nicely.
 # Currently the workaround is to `make clean` after modifying schemes.
 
-$(KEMLIBS_M4): force
-	make -C $@ libpqm4.a
+$(LIBS_M4): force
+	make -C $(dir $@) libpqm4.a
 
-$(SIGNLIBS_M4): force
-	make -C $@ libpqm4.a
-
-$(KEMLIBS_REF): force
-	make -C $@ libpqm4.a
-	make -C $@ libpqhost.a
-
-$(SIGNLIBS_REF): force
-	make -C $@ libpqm4.a
-	make -C $@ libpqhost.a
+$(LIBS_HOST): force
+	make -C $(dir $@) libpqhost.a
 
 bin-host/crypto_kem_%:  $(OBJS_HOST) obj-host/$(patsubst %,crypto_kem_%.o,%)
 	mkdir -p bin-host
@@ -251,6 +250,11 @@ obj/fips202.o:  common/fips202.c
 	$(CC) $(CFLAGS) -o $@ -c $^
 
 obj/keccakf1600.o:  common/keccakf1600.S
+	mkdir -p obj
+	$(CC) $(CFLAGS) -o $@ -c $^
+
+
+obj/crypto_hash_sha512.o:  common/crypto_hash_sha512.c
 	mkdir -p obj
 	$(CC) $(CFLAGS) -o $@ -c $^
 
