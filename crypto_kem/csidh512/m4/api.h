@@ -5,8 +5,8 @@
 
 #define CRYPTO_SECRETKEYBYTES   65 //=floor((primes+1)/2)
 #define CRYPTO_PUBLICKEYBYTES   128
-#define CRYPTO_CIPHERTEXTBYTES  64 // I don't know, ask
-#define CRYPTO_BYTES 128 // Same as public key bytes (main.c)
+#define CRYPTO_CIPHERTEXTBYTES  128
+#define CRYPTO_BYTES 128
 
 int crypto_kem_keypair(unsigned char *pk, unsigned char *sk);
 

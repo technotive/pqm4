@@ -6,6 +6,9 @@ AR 			= gcc-ar
 
 OBJECTS 			 = constants.o mont.o csidh.o uint.o fp.o kem.o
 
+libpqm4.a:
+	echo "Ignoring m4 target for ref."
+
 libpqhost.a: $(OBJECTS)
 	$(AR) rcs $@ $(OBJECTS)
 
