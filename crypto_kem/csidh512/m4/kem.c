@@ -2,25 +2,32 @@
 #include "api.h"
 #include "randombytes.h"
 #include "csidh.h"
+#include "crypto_hash_sha512.h"
 
 /* CSIDH function might return false for a failed verification */
 int crypto_kem_keypair(unsigned char *pk, unsigned char *sk){
   csidh_private((private_key*)sk);
-  return csidh((public_key*) pk, &base, (private_key*) sk);
+  if(!csidh((public_key*) pk, &base, (private_key*) sk)){
+    while(!csidh((public_key*) pk, (public_key*) pk, (private_key*) sk));
+    return 1;
+  }
+  return 0;
 }
 
 /* ss is the thing we want to share = H(skb*pka) <= skb*pka=ska*pkb */
 int crypto_kem_enc(unsigned char *ct, unsigned char *ss, const unsigned char *pk){
   private_key skb;
   csidh_private(&skb);
-
-  bool res = csidh((public_key*) ct, &base, &skb);
-  res = res && csidh((public_key*) ss, (public_key*) pk, &skb);
-  return res;
+  if(!csidh((public_key*) ct, &base, &skb))
+    send_USART_str("pkb fail");
+  if(!csidh((public_key*) ss, (public_key*) pk, &skb))
+    send_USART_str("ss fail");
+  return 0;
 }
 
 /* ct = pkb, sk = ska; Recreate ss = H(ska*pkb) <= skb*pka=ska*pkb */
 int crypto_kem_dec(unsigned char *ss, const unsigned char *ct, const unsigned char *sk){
-  bool res =  csidh((public_key*) ss, (public_key*) ct, (private_key*) sk);
-  return res;
+  if(!csidh((public_key*) ss, (public_key*) ct, (private_key*) sk))
+    send_USART_str("ss2 fail");
+  return 0;
 }

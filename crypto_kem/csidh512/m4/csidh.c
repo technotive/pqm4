@@ -86,20 +86,29 @@ bool validate(public_key const *in)
     /* make sure the curve is nonsingular: A^2-4 != 0 */
     {
         uint dummy;
-        if (!uint_sub3(&dummy, (uint *) &in->A, &p)) /* returns borrow */
+        if (!uint_sub3(&dummy, (uint *) &in->A, &prime)) /* returns borrow */
             /* A >= p */
-            return false;
+            {
+              send_USART_str("Borrow: true");
+              return false;
+            }
 
         fp fp_pm2;
         fp_set(&fp_pm2, 2);
         if (!memcmp(&in->A, &fp_pm2, sizeof(fp)))
             /* A = 2 */
-            return false;
+            {
+              send_USART_str("Check: A=2");
+              return false;
+            }
 
         fp_sub3(&fp_pm2, &fp_0, &fp_pm2);
         if (!memcmp(&in->A, &fp_pm2, sizeof(fp)))
             /* A = -2 */
-            return false;
+            {
+              send_USART_str("Check: A=-2");
+              return false;
+            }
     }
 
     const proj A = {in->A, fp_1};

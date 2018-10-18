@@ -30,8 +30,8 @@ static int test_keys(void)
     if(memcmp(key_a, key_b, CRYPTO_BYTES))
     {
       send_USART_str("ERROR KEYS\n");
-    } 
-    else 
+    }
+    else
     {
       send_USART_str("OK KEYS\n");
     }
@@ -63,11 +63,11 @@ static int test_invalid_sk_a(void)
     //Alice uses Bobs response to get her secre key
     crypto_kem_dec(key_a, sendb, sk_a);
 
-    if(!memcmp(key_a, key_b, CRYPTO_BYTES)) 
+    if(!memcmp(key_a, key_b, CRYPTO_BYTES))
     {
       send_USART_str("ERROR invalid sk_a\n");
-    } 
-    else 
+    }
+    else
     {
       send_USART_str("OK invalid sk_a\n");
     }
@@ -105,8 +105,8 @@ static int test_invalid_ciphertext(void)
     if(!memcmp(key_a, key_b, CRYPTO_BYTES))
     {
       send_USART_str("ERROR invalid ciphertext\n");
-    } 
-    else 
+    }
+    else
     {
       send_USART_str("OK invalid ciphertext\n");
     }

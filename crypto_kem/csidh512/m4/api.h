@@ -6,7 +6,7 @@
 #define CRYPTO_SECRETKEYBYTES   65 //=floor((primes+1)/2)
 #define CRYPTO_PUBLICKEYBYTES   128
 #define CRYPTO_CIPHERTEXTBYTES  128
-#define CRYPTO_BYTES 128
+#define CRYPTO_BYTES 64 //=H(ska*pkb)=H(skb*pka)
 
 int crypto_kem_keypair(unsigned char *pk, unsigned char *sk);
 

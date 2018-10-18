@@ -2,7 +2,7 @@
 #define CONSTANTS_H
 
 extern const uint64_t pbits;
-extern const uint p;
+extern const uint prime;
 extern const fp fp_0;
 extern const fp fp_1;
 extern const fp r_squared_mod_p;

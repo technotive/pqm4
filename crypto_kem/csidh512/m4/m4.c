@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <stdbool.h>
 #include "m4.h"
 
 bool m4_add_overflow(uint32_t a, uint32_t b, uint32_t* result) {

@@ -8,5 +8,5 @@
 
 void randombytes_mask(void *x, size_t l)
 {
-    randombytes(x, l);
+    randombytes((unsigned char*)x, (unsigned long long)l);
 }

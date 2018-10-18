@@ -17,7 +17,7 @@ void fp_set(fp *x, uint32_t y)
 static void reduce_once(uint *x)
 {
     uint t;
-    if (!uint_sub3(&t, x, &p))
+    if (!uint_sub3(&t, x, &prime))
         *x = t;
 }
 
@@ -35,7 +35,7 @@ void fp_add2(fp *x, fp const *y)
 void fp_sub3(fp *x, fp const *y, fp const *z)
 {
     if (uint_sub3((uint *) x, (uint *) y, (uint *) z))
-        uint_add3((uint *) x, (uint *) x, &p);
+        uint_add3((uint *) x, (uint *) x, &prime);
 }
 
 void fp_sub2(fp *x, fp const *y)
@@ -66,7 +66,7 @@ void fp_mul3(fp *x, fp const *y, fp const *z)
 
         bool c = 0, o = 0;
         for (size_t i = 0; i < LIMBS; ++i) {
-            uint64_t u = (uint64_t) m * p.c[i];
+            uint64_t u = (uint64_t) m * prime.c[i];
             o = m4_add_overflow(r(i), o, &r(i));
             o |= m4_add_overflow(r(i), u, &r(i));
             c = m4_add_overflow(r(i+1), c, &r(i+1));
@@ -142,9 +142,9 @@ void fp_random(fp *x)
         x->c[LIMBS - 1] &= m;
 
         for (size_t i = LIMBS - 1; i < LIMBS; --i)
-            if (x->c[i] < p.c[i])
+            if (x->c[i] < prime.c[i])
                 return;
-            else if (x->c[i] > p.c[i])
+            else if (x->c[i] > prime.c[i])
                 break;
     }
 }

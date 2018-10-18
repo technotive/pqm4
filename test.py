@@ -28,8 +28,8 @@ def doTest(binary):
 
     print("Flashing {}..".format(binpath))
 
-    subprocess.run(["st-flash", "write", binpath, "0x8000000"],
-                   stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    subprocess.run(["st-flash", "write", binpath, "0x8000000"]) #,
+                   #stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
     print("Flashed, now running tests...")
 
@@ -62,9 +62,10 @@ def doTest(binary):
             if x == b'#':
                 break
             else:
+                print(x.decode("utf-8"), end='') #Debug addition
                 vector.append(x)
     print("Testing if tests were successful..")
-    
+
     contents = b''.join(vector).decode('utf-8').strip()
     # can we find a nicer way of checking if tests ran correctly?
     if contents.count("ERROR") != 0 or contents.count("OK") != 30:
@@ -76,4 +77,4 @@ def doTest(binary):
 
 
 for binary in binaries:
-    doTest(binary)    
+    doTest(binary)

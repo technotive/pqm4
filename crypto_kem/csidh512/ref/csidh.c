@@ -86,7 +86,7 @@ bool validate(public_key const *in)
     /* make sure the curve is nonsingular: A^2-4 != 0 */
     {
         uint dummy;
-        if (!uint_sub3(&dummy, (uint *) &in->A, &p)) /* returns borrow */
+        if (!uint_sub3(&dummy, (uint *) &in->A, &prime)) /* returns borrow */
             /* A >= p */
             return false;
 

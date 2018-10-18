@@ -4,7 +4,8 @@
 
 const uint32_t pbits = 511;
 
-const struct uint p = {{
+/* Had to rename this p in order to keep nice with stack.c */
+const struct uint prime = {{
     0x1b81b905, 0x33c6c87b, 0xc2721bf4, 0x57aca835, 0x516730cc, 0x1f0b4f25, 0xa7aac6c5, 0x67f35507, 0x5afbfcc6, 0x9322c9cd, 0xb42d083a, 0xedc88c42, 0xfc8ab0d1, 0x5e3e4c4a, 0x65b48e8f, 0x740f89bf,
 }};
 
