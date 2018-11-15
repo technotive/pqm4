@@ -17,7 +17,7 @@ void csidh_private(private_key *priv)
     memset(&priv->e, 0, sizeof(priv->e));
     for (size_t i = 0; i < NUM_PRIMES; ) {
         int8_t buf[64];
-        randombytes_mask(buf, sizeof(buf));
+        randombytes_mask(buf, 64);
         for (size_t j = 0; j < sizeof(buf); ++j) {
             if (buf[j] <= MAX_EXPONENT && buf[j] >= -MAX_EXPONENT) {
                 priv->e[i / 2] |= (buf[j] & 0xf) << i % 2 * 4;
@@ -38,7 +38,6 @@ static bool validate_rec(proj *P, proj const *A, size_t lower, size_t upper, uin
         /* we only gain information if this multiple is non-zero */
 
         if (memcmp(&P->z, &fp_0, sizeof(fp))) {
-
             uint tmp;
             uint_set(&tmp, primes[lower]);
             xMUL(P, A, P, &tmp);
@@ -74,7 +73,7 @@ static bool validate_rec(proj *P, proj const *A, size_t lower, size_t upper, uin
 
     xMUL(&Q, A, P, &cu);
     xMUL(P, A, P, &cl);
-
+    
     /* start with the right half; bigger primes help more */
     return validate_rec(&Q, A, mid, upper, order, is_supersingular)
         || validate_rec(P, A, lower, mid, order, is_supersingular);
@@ -88,27 +87,18 @@ bool validate(public_key const *in)
         uint dummy;
         if (!uint_sub3(&dummy, (uint *) &in->A, &prime)) /* returns borrow */
             /* A >= p */
-            {
-              send_USART_str("Borrow: true");
-              return false;
-            }
+            return false;
 
         fp fp_pm2;
         fp_set(&fp_pm2, 2);
         if (!memcmp(&in->A, &fp_pm2, sizeof(fp)))
             /* A = 2 */
-            {
-              send_USART_str("Check: A=2");
-              return false;
-            }
+            return false;
 
         fp_sub3(&fp_pm2, &fp_0, &fp_pm2);
         if (!memcmp(&in->A, &fp_pm2, sizeof(fp)))
             /* A = -2 */
-            {
-              send_USART_str("Check: A=-2");
-              return false;
-            }
+            return false;
     }
 
     const proj A = {in->A, fp_1};
@@ -126,7 +116,7 @@ bool validate(public_key const *in)
         uint order = uint_1;
 
         if (validate_rec(&P, &A, 0, NUM_PRIMES, &order, &is_supersingular))
-            return is_supersingular;
+          return is_supersingular;
 
     /* P didn't have big enough order to prove supersingularity. */
     } while (1);

@@ -185,4 +185,3 @@ void xISOG(proj *A, proj *P, proj const *K, uint64_t k)
     fp_mul2(&P->x, &Q.x);
     fp_mul2(&P->z, &Q.z);
 }
-

@@ -93,7 +93,6 @@ int main(void)
 
     // Decapsulation
     crypto_kem_dec(key_a, sendb, sk_a);
-
     printbytes(key_a,CRYPTO_BYTES);
 
     for(j=0;j<CRYPTO_BYTES;j++)

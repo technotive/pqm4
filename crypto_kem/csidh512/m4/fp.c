@@ -62,15 +62,15 @@ void fp_mul3(fp *x, fp const *y, fp const *z)
     for (size_t k = 0; k < LIMBS; ++k) {
 #define r(i) t[(k + (i)) % (LIMBS + 1)]
 
-        uint64_t m = inv_min_p_mod_r * (y->c[k] * z->c[0] + r(0));
+        uint64_t m = inv_min_p_mod_r2 * (y->c[k] * z->c[0] + r(0));
 
         bool c = 0, o = 0;
         for (size_t i = 0; i < LIMBS; ++i) {
             uint64_t u = (uint64_t) m * prime.c[i];
             o = m4_add_overflow(r(i), o, &r(i));
-            o |= m4_add_overflow(r(i), u, &r(i));
+            o |= m4_add_overflow(r(i), (uint32_t) u, &r(i));
             c = m4_add_overflow(r(i+1), c, &r(i+1));
-            c |= m4_add_overflow(r(i+1), (u >> 32), &r(i+1));
+            c |= m4_add_overflow(r(i+1), (uint32_t) (u >> 32), &r(i+1));
         }
         r(LIMBS) += o;
 
@@ -78,9 +78,9 @@ void fp_mul3(fp *x, fp const *y, fp const *z)
         for (size_t i = 0; i < LIMBS; ++i) {
             uint64_t u = (uint64_t) y->c[k] * z->c[i];
             o = m4_add_overflow(r(i), o, &r(i));
-            o |= m4_add_overflow(r(i), u, &r(i));
+            o |= m4_add_overflow(r(i), (uint32_t) u, &r(i));
             c = m4_add_overflow(r(i+1), c, &r(i+1));
-            c |= m4_add_overflow(r(i+1), (u >> 32), &r(i+1));
+            c |= m4_add_overflow(r(i+1), (uint32_t) (u >> 32), &r(i+1));
         }
         r(LIMBS) += o;
 #undef r
@@ -88,6 +88,8 @@ void fp_mul3(fp *x, fp const *y, fp const *z)
 
     for (size_t i = 0; i < LIMBS; ++i)
         x->c[i] = t[(LIMBS + i) % (LIMBS + 1)];
+
+    // printbytes((unsigned char *) &x->c, 4*(LIMBS));
 
     reduce_once((uint *) x);
 }

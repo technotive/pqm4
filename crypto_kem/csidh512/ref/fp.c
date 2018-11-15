@@ -88,6 +88,8 @@ void fp_mul3(fp *x, fp const *y, fp const *z)
     for (size_t i = 0; i < LIMBS; ++i)
         x->c[i] = t[(LIMBS + i) % (LIMBS + 1)];
 
+    // printbytes((unsigned char *) &x->c, 8*(LIMBS));
+
     reduce_once((uint *) x);
 }
 

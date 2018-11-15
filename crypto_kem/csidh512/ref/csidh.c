@@ -1,4 +1,4 @@
-
+#include <stdio.h>
 #include <string.h>
 #include <assert.h>
 
@@ -17,7 +17,7 @@ void csidh_private(private_key *priv)
     memset(&priv->e, 0, sizeof(priv->e));
     for (size_t i = 0; i < NUM_PRIMES; ) {
         int8_t buf[64];
-        randombytes_mask(buf, sizeof(buf));
+        randombytes_mask(buf, 64);
         for (size_t j = 0; j < sizeof(buf); ++j) {
             if (buf[j] <= MAX_EXPONENT && buf[j] >= -MAX_EXPONENT) {
                 priv->e[i / 2] |= (buf[j] & 0xf) << i % 2 * 4;
@@ -38,7 +38,6 @@ static bool validate_rec(proj *P, proj const *A, size_t lower, size_t upper, uin
         /* we only gain information if this multiple is non-zero */
 
         if (memcmp(&P->z, &fp_0, sizeof(fp))) {
-
             uint tmp;
             uint_set(&tmp, primes[lower]);
             xMUL(P, A, P, &tmp);
@@ -74,7 +73,6 @@ static bool validate_rec(proj *P, proj const *A, size_t lower, size_t upper, uin
 
     xMUL(&Q, A, P, &cu);
     xMUL(P, A, P, &cl);
-
     /* start with the right half; bigger primes help more */
     return validate_rec(&Q, A, mid, upper, order, is_supersingular)
         || validate_rec(P, A, lower, mid, order, is_supersingular);
