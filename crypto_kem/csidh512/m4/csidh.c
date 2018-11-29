@@ -73,7 +73,7 @@ static bool validate_rec(proj *P, proj const *A, size_t lower, size_t upper, uin
 
     xMUL(&Q, A, P, &cu);
     xMUL(P, A, P, &cl);
-    
+
     /* start with the right half; bigger primes help more */
     return validate_rec(&Q, A, mid, upper, order, is_supersingular)
         || validate_rec(P, A, lower, mid, order, is_supersingular);
@@ -96,6 +96,7 @@ bool validate(public_key const *in)
             return false;
 
         fp_sub3(&fp_pm2, &fp_0, &fp_pm2);
+
         if (!memcmp(&in->A, &fp_pm2, sizeof(fp)))
             /* A = -2 */
             return false;

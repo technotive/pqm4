@@ -3,6 +3,7 @@
 #include "randombytes.h"
 #include "csidh.h"
 #include "crypto_hash_sha512.h"
+#include "uint.h"
 
 /* CSIDH function might return false for a failed verification */
 int crypto_kem_keypair(unsigned char *pk, unsigned char *sk){
@@ -24,7 +25,6 @@ int crypto_kem_enc(unsigned char *ct, unsigned char *ss, const unsigned char *pk
   }
   if(!csidh((public_key*) ss, (public_key*) pk, &skb))
   {
-    send_USART_str("Could not generate shared secret.");
     return -1;
   }
   crypto_hash_sha512((unsigned char*) ss, (unsigned char*) ss, 64);
@@ -35,7 +35,6 @@ int crypto_kem_enc(unsigned char *ct, unsigned char *ss, const unsigned char *pk
 int crypto_kem_dec(unsigned char *ss, const unsigned char *ct, const unsigned char *sk){
   if(!csidh((public_key*) ss, (public_key*) ct, (private_key*) sk))
   {
-    send_USART_str("Could not re-generate shared secret.");
     return -1;
   }
   crypto_hash_sha512((unsigned char*) ss, (unsigned char*) ss, 64);
