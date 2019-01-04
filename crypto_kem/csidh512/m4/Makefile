@@ -21,4 +21,3 @@ libpqm4.a: $(OBJECTS)
 clean:
 	-rm -f libpqm4.a
 	-rm -f *.o
-	-rm -f libpqhost.a

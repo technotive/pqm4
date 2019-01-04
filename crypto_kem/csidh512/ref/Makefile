@@ -19,5 +19,5 @@ libpqhost.a: $(OBJECTS)
 .INTERMEDIATE: $(OBJECTS) $(OBJECTS_HOST)
 
 clean:
-	-rm -f libpqm4.a
+	-rm -f libpqhost.a
 	-rm -f *.o

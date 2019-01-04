@@ -7,20 +7,24 @@ uint_1: .quad 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 .global uint_set
 .type uint_set, %function
 
-.macro batch_set
-  str r1, [r0], #4
-  str r1, [r0], #4
-  str r1, [r0], #4
-  str r1, [r0], #4
-  str r1, [r0], #4
-.endm
-
 uint_set:
   str r1, [r0], #4
   mov r1, #0
-  batch_set
-  batch_set
-  batch_set
+  str r1, [r0], #4
+  str r1, [r0], #4
+  str r1, [r0], #4
+  str r1, [r0], #4
+  str r1, [r0], #4
+  str r1, [r0], #4
+  str r1, [r0], #4
+  str r1, [r0], #4
+  str r1, [r0], #4
+  str r1, [r0], #4
+  str r1, [r0], #4
+  str r1, [r0], #4
+  str r1, [r0], #4
+  str r1, [r0], #4
+  str r1, [r0], #4
   bx lr
 
 .global uint_bit
@@ -37,122 +41,101 @@ uint_bit:
 .global uint_add3
 .type uint_add3, %function
 
-.macro m4add
-  ldr r4, [r2], #4
-  ldr r3, [r1], #4
-  adcs r3, r3, r4
-  str r3, [r0], #4
-.endm
-
 uint_add3:
-  push {r4}
-  ldr r3, [r1], #4
-  ldr r4, [r2], #4
-  adds r3, r3, r4
-  str r3, [r0], #4
-  m4add
-  m4add
-  m4add
-  m4add
-  m4add
-  m4add
-  m4add
-  m4add
-  m4add
-  m4add
-  m4add
-  m4add
-  m4add
-  m4add
-  m4add
+  push {r4-r12}
+  ldmia r2!, {r3-r7}
+  ldmia r1!, {r8-r12}
+  adds r3, r3, r8
+  adcs r4, r4, r9
+  adcs r5, r5, r10
+  adcs r6, r6, r11
+  adcs r7, r7, r12
+  stmia r0!, {r3-r7}
+  ldmia r2!, {r3-r7}
+  ldmia r1!, {r8-r12}
+  adcs r3, r3, r8
+  adcs r4, r4, r9
+  adcs r5, r5, r10
+  adcs r6, r6, r11
+  adcs r7, r7, r12
+  stmia r0!, {r3-r7}
+  ldmia r2, {r2-r7}
+  ldmia r1, {r1,r8-r12}
+  adcs r2, r2, r1
+  adcs r3, r3, r8
+  adcs r4, r4, r9
+  adcs r5, r5, r10
+  adcs r6, r6, r11
+  adcs r7, r7, r12
+  stmia r0!, {r2-r7}
   mov r0, #0
   it cs
   movcs r0, #1
-  pop {r4}
+  pop {r4-r12}
   bx lr
 
 .global uint_sub3
 .type uint_sub3, %function
 
-.macro m4sub, o
-  ldr r4, [r2], #4
-  ldr r3, [r1], #4
-  sbcs r3, r3, r4
-  str r3, [r0], #4
-.endm
-
 uint_sub3:
-  push {r4}
-  ldr r3, [r1], #4
-  ldr r4, [r2], #4
-  subs r3, r3, r4
-  str r3, [r0], #4
-  m4sub
-  m4sub
-  m4sub
-  m4sub
-  m4sub
-  m4sub
-  m4sub
-  m4sub
-  m4sub
-  m4sub
-  m4sub
-  m4sub
-  m4sub
-  m4sub
-  m4sub
+  push {r4-r12}
+  ldmia r1!, {r3-r7}
+  ldmia r2!, {r8-r12}
+  subs r3, r3, r8
+  sbcs r4, r4, r9
+  sbcs r5, r5, r10
+  sbcs r6, r6, r11
+  sbcs r7, r7, r12
+  stmia r0!, {r3-r7}
+  ldmia r1!, {r3-r7}
+  ldmia r2!, {r8-r12}
+  sbcs r3, r3, r8
+  sbcs r4, r4, r9
+  sbcs r5, r5, r10
+  sbcs r6, r6, r11
+  sbcs r7, r7, r12
+  stmia r0!, {r3-r7}
+  ldmia r1, {r1,r3-r7}
+  ldmia r2, {r2,r8-r12}
+  sbcs r2, r1, r2
+  sbcs r3, r3, r8
+  sbcs r4, r4, r9
+  sbcs r5, r5, r10
+  sbcs r6, r6, r11
+  sbcs r7, r7, r12
+  stmia r0, {r2-r7}
   mov r0, #0
   it cc
   movcc r0, #1
-  pop {r4}
+  pop {r4-r12}
   bx lr
 
 .global uint_mul3_64
 .type uint_mul3_64, %function
 
 uint_mul3_64:
-  push {r4-r12}
-  ldr r3, [r1, #0]
-  umull r3, r4, r3, r2
-  str r3, [r0], #4
-  ldr r12, [r1, #8]
-  umull r5, r6, r12, r2
-  ldr r12, [r1, #16]
-  umull r7, r8, r12, r2
-  ldr r12, [r1, #24]
+  push {r4-r12,r14}
+  ldmia r1!, {r6-r12,r14}
+  umull r3, r4, r6, r2
+  umull r5, r6, r8, r2
+  umlal r4, r5, r7, r2
+  umull r7, r8, r10, r2
+  umlal r6, r7, r9, r2
   umull r9, r10, r12, r2
-  ldr r12, [r1, #32]
-  ldr r3, [r1, #4]
-  umull r11, r12, r12, r2
-  umlal r4, r5, r3, r2
-  ldr r3, [r1, #12]
-  stmia r0!, {r4, r5}
-  umlal r6, r7, r3, r2
-  ldr r3, [r1, #20]
-  stmia r0!, {r6, r7}
-  umlal r8, r9, r3, r2
-  ldr r3, [r1, #28]
-  stmia r0!, {r8, r9}
-  umlal r10, r11, r3, r2
-  stmia r0!, {r10, r11}
-  ldr r11, [r1, #40]
-  umull r3, r4, r11, r2
-  ldr r11, [r1, #48]
-  umull r5, r6, r11, r2
-  ldr r11, [r1, #56]
-  umull r7, r8, r11, r2
-  ldr r11, [r1, #36]
-  umlal r12, r3, r11, r2
-  ldr r11, [r1, #44]
-  stmia r0! {r12, r3}
-  umlal r4, r5, r11, r2
-  ldr r11, [r1, #52]
-  stmia r0!, {r4, r5}
-  umlal r6, r7, r11, r2
-  ldr r11, [r1, #60]
-  stmia r0!, {r6, r7}
   umlal r8, r9, r11, r2
-  str r8, [r0]
-  pop {r4-r12}
+  mov r11, #0
+  umlal r10, r11, r14, r2
+  stmia r0!, {r3-r10}
+  ldmia r1, {r3-r10}
+  umull r12, r14, r4, r2
+  umlal r11, r12, r3, r2
+  umull r1, r3, r6, r2
+  umlal r14, r1, r5, r2
+  stmia r0!, {r11,r12,r14}
+  umull r4, r5, r8, r2
+  umlal r3, r4, r7, r2
+  mul r6, r10, r2
+  umlal r5, r6, r9, r2
+  stmia r0, {r1,r3-r6}
+  pop {r4-r12,r14}
   bx lr

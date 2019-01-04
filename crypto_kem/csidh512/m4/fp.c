@@ -5,8 +5,16 @@
 #include "params.h"
 #include "uint.h"
 #include "fp.h"
-#include "m4.h"
 #include "rng.h"
+
+bool m4_add_overflow(uint32_t a, uint32_t b, uint32_t* result) {
+  (*result) = a+b;
+  return (b > (UINT32_MAX ^ a));
+}
+bool m4_sub_overflow(uint32_t a, uint32_t b, uint32_t* result){
+  (*result) = a-b;
+  return (b > a);
+}
 
 void fp_set(fp *x, uint32_t y)
 {
@@ -88,8 +96,6 @@ void fp_mul3(fp *x, fp const *y, fp const *z)
 
     for (size_t i = 0; i < LIMBS; ++i)
         x->c[i] = t[(LIMBS + i) % (LIMBS + 1)];
-
-    // printbytes((unsigned char *) &x->c, 4*(LIMBS));
 
     reduce_once((uint *) x);
 }

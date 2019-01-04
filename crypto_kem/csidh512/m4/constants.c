@@ -25,9 +25,7 @@ const struct fp r_squared_mod_p = {{
 }};
 
 /* -p^-1 mod 2^32 */
-const uint32_t inv_min_p_mod_r2 = 0x632e294d;
-/* -p^-1 mod 2^64 */
-const uint64_t inv_min_p_mod_r = 0x66c1301f632e294d;
+const uint32_t inv_min_p_mod_r = 0x632e294d;
 
 /* p - 2 */
 const struct uint p_minus_2 = {{
