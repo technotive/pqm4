@@ -3,7 +3,7 @@
 #include "randombytes.h"
 #include "csidh.h"
 #include "crypto_hash_sha512.h"
-#include "uint.h"
+
 
 /* CSIDH function might return false for a failed verification */
 int crypto_kem_keypair(unsigned char *pk, unsigned char *sk){

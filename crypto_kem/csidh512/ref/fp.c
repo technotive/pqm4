@@ -7,6 +7,20 @@
 #include "fp.h"
 #include "rng.h"
 
+static void printbytes(const unsigned char *x, unsigned long long xlen)
+{
+  char o[2*xlen+3];
+  o[0] = '0';
+  o[1] = 'x';
+  char * outs = &o[2];
+  unsigned long long i;
+  for(i=0;i<xlen;i++)
+    sprintf(outs+2*i, "%02x", x[(xlen-1)-i]);
+  outs[2*xlen] = 0;
+  printf(o);
+  printf("\n");
+}
+
 void fp_set(fp *x, uint64_t y)
 {
     uint_set((uint *) x, y);
@@ -57,6 +71,9 @@ void fp_dec(uint *x, fp const *y)
 
 void fp_mul3(fp *x, fp const *y, fp const *z)
 {
+  // printbytes(&y->c, 64);
+  // printbytes(&z->c, 64);
+
     uint64_t t[LIMBS + 1] = {0};
     for (size_t k = 0; k < LIMBS; ++k) {
 #define r(i) t[(k + (i)) % (LIMBS + 1)]
@@ -88,9 +105,8 @@ void fp_mul3(fp *x, fp const *y, fp const *z)
     for (size_t i = 0; i < LIMBS; ++i)
         x->c[i] = t[(LIMBS + i) % (LIMBS + 1)];
 
-    // printbytes((unsigned char *) &x->c, 8*(LIMBS));
-
     reduce_once((uint *) x);
+    // printbytes(x, 64);
 }
 
 

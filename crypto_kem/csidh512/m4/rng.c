@@ -1,6 +1,5 @@
 
 #include "rng.h"
-#include "randombytes.h"
 
 #include <stdlib.h>
 #include <unistd.h>

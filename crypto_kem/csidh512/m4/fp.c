@@ -1,15 +1,30 @@
 
 #include <stddef.h>
 #include <string.h>
-
+#include "m4mul512x512.h"
 #include "params.h"
 #include "uint.h"
 #include "fp.h"
 #include "rng.h"
 
+static uint64_t ctr = 0;
+
+static void printbytes(const unsigned char *x, unsigned long long xlen)
+{
+  char o[2*xlen+3];
+  o[0] = '0';
+  o[1] = 'x';
+  char * outs = &o[2];
+  unsigned long long i;
+  for(i=0;i<xlen;i++)
+    sprintf(outs+2*i, "%02x", x[(xlen-1)-i]); // Reverse print for sage.
+  outs[2*xlen] = 0;
+  send_USART_str((unsigned char *)o);
+}
+
 bool m4_add_overflow(uint32_t a, uint32_t b, uint32_t* result) {
   (*result) = a+b;
-  return (b > (UINT32_MAX ^ a));
+  return (b > (UINT32_MAX - a));
 }
 bool m4_sub_overflow(uint32_t a, uint32_t b, uint32_t* result){
   (*result) = a-b;
@@ -66,38 +81,31 @@ void fp_dec(uint *x, fp const *y)
 
 void fp_mul3(fp *x, fp const *y, fp const *z)
 {
-    uint32_t t[LIMBS + 1] = {0};
-    for (size_t k = 0; k < LIMBS; ++k) {
-#define r(i) t[(k + (i)) % (LIMBS + 1)]
+  // ctr++;
+  // if(ctr == 14617 || ctr == 14618) {
+  //   printbytes(&y->c, 64);
+  //   printbytes(&z->c, 64);
+  // }
+  // if(ctr >= 4857858) {
+  //   send_USART_str("[PING]");
+  //   printbytes(&y->c, 64);
+  //   printbytes(&z->c, 64);
+  // }
+  // printbytes(&y->c, 64);
+  // printbytes(&z->c, 64);
 
-        uint64_t m = inv_min_p_mod_r2 * (y->c[k] * z->c[0] + r(0));
 
-        bool c = 0, o = 0;
-        for (size_t i = 0; i < LIMBS; ++i) {
-            uint64_t u = (uint64_t) m * prime.c[i];
-            o = m4_add_overflow(r(i), o, &r(i));
-            o |= m4_add_overflow(r(i), (uint32_t) u, &r(i));
-            c = m4_add_overflow(r(i+1), c, &r(i+1));
-            c |= m4_add_overflow(r(i+1), (uint32_t) (u >> 32), &r(i+1));
-        }
-        r(LIMBS) += o;
+  uint32_t t[32];
+  m4mul512x512(t, (uint32_t*)&y->c, (uint32_t*)&z->c);
 
-        c = o = 0;
-        for (size_t i = 0; i < LIMBS; ++i) {
-            uint64_t u = (uint64_t) y->c[k] * z->c[i];
-            o = m4_add_overflow(r(i), o, &r(i));
-            o |= m4_add_overflow(r(i), (uint32_t) u, &r(i));
-            c = m4_add_overflow(r(i+1), c, &r(i+1));
-            c |= m4_add_overflow(r(i+1), (uint32_t) (u >> 32), &r(i+1));
-        }
-        r(LIMBS) += o;
-#undef r
-    }
+  //Now we have to reduce t so that it fits in x.
+  //prime p of size n
+  //big number t of size 2n
 
-    for (size_t i = 0; i < LIMBS; ++i)
-        x->c[i] = t[(LIMBS + i) % (LIMBS + 1)];
+  mmul(t, &prime.c, inv_min_p_mod_r, &x->c);
 
-    reduce_once((uint *) x);
+  reduce_once((uint*)x);
+  // printbytes(&x->c, 64);
 }
 
 
