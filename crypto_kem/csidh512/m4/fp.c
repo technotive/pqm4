@@ -81,20 +81,6 @@ void fp_dec(uint *x, fp const *y)
 
 void fp_mul3(fp *x, fp const *y, fp const *z)
 {
-  // ctr++;
-  // if(ctr == 14617 || ctr == 14618) {
-  //   printbytes(&y->c, 64);
-  //   printbytes(&z->c, 64);
-  // }
-  // if(ctr >= 4857858) {
-  //   send_USART_str("[PING]");
-  //   printbytes(&y->c, 64);
-  //   printbytes(&z->c, 64);
-  // }
-  // printbytes(&y->c, 64);
-  // printbytes(&z->c, 64);
-
-
   uint32_t t[32];
   m4mul512x512(t, (uint32_t*)&y->c, (uint32_t*)&z->c);
 
@@ -105,7 +91,6 @@ void fp_mul3(fp *x, fp const *y, fp const *z)
   mmul(t, &prime.c, inv_min_p_mod_r, &x->c);
 
   reduce_once((uint*)x);
-  // printbytes(&x->c, 64);
 }
 
 
