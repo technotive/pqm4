@@ -200,102 +200,6 @@ M:
 
 // Montgomery Reduction Functions
 
-.macro stepp
-  ldmia r0, {r10-r12,r14} // t[0-3]
-  ldmia r1!, {r6-r9} // p[0-3]
-
-  mul r4, r10, r2 // u
-  // Lock r0-r4
-
-  umull r5, r6, r4, r6 // a
-  adds r10, r10, r5
-  adcs r11, r11, r6
-
-  umull r5, r6, r4, r7 // a
-  adc r6, #0
-  adds r11, r11, r5
-  adcs r12, r12, r6
-
-  umull r5, r6, r4, r8 // a
-  adc r6, #0
-  adds r12, r12, r5
-  adcs r14, r14, r6
-
-  umull r5, r6, r4, r9 // a
-  adc r6, #0
-  adds r14, r14, r5
-  stmia r0!, {r10-r12,r14}
-  ldmia r0, {r10-r12,r14}
-  adcs r10, r10, r6
-
-  ldmia r1!, {r6-r9}
-  umull r5, r6, r4, r6
-  adc r6, #0
-  adds r10, r10, r5
-  adcs r11, r11, r6
-
-  umull r5, r6, r4, r7 // a
-  adc r6, #0
-  adds r11, r11, r5
-  adcs r12, r12, r6
-
-  umull r5, r6, r4, r8 // a
-  adc r6, #0
-  adds r12, r12, r5
-  adcs r14, r14, r6
-
-  umull r5, r6, r4, r9 // a
-  adc r6, #0
-  adds r14, r14, r5
-  stmia r0!, {r10-r12,r14}
-  ldmia r0, {r10-r12,r14}
-  adcs r10, r10, r6
-
-  ldmia r1!, {r6-r9}
-  umull r5, r6, r4, r6
-  adc r6, #0
-  adds r10, r10, r5
-  adcs r11, r11, r6
-
-  umull r5, r6, r4, r7 // a
-  adc r6, #0
-  adds r11, r11, r5
-  adcs r12, r12, r6
-
-  umull r5, r6, r4, r8 // a
-  adc r6, #0
-  adds r12, r12, r5
-  adcs r14, r14, r6
-
-  umull r5, r6, r4, r9 // a
-  adc r6, #0
-  adds r14, r14, r5
-  stmia r0!, {r10-r12,r14}
-  ldmia r0, {r10-r12,r14}
-  adcs r10, r10, r6
-
-  ldmia r1!, {r6-r9}
-  umull r5, r6, r4, r6
-  adc r6, #0
-  adds r10, r10, r5
-  adcs r11, r11, r6
-
-  umull r5, r6, r4, r7 // a
-  adc r6, #0
-  adds r11, r11, r5
-  adcs r12, r12, r6
-
-  umull r5, r6, r4, r8 // a
-  adc r6, #0
-  adds r12, r12, r5
-  adcs r14, r14, r6
-
-  umull r5, r4, r4, r9 // a
-  adc r4, #0
-  adds r14, r14, r5
-  stmia r0!, {r10-r12,r14}
-.endm
-
 .macro stepp2
   ldmia r0, {r10-r12,r14} // t[0-3]
   ldmia r1!, {r6-r9} // p[0-3]
@@ -303,94 +207,47 @@ M:
   mul r4, r10, r2 // u
   // Lock r0-r4
 
-  umull r5, r6, r4, r6 // a
-  adds r10, r10, r5
-  adcs r11, r11, r6
+  mov r5, #0
+  umaal r10, r5, r4, r6
+  umaal r11, r5, r4, r7
+  umaal r12, r5, r4, r8
+  umaal r14, r5, r4, r9
 
-  umull r5, r6, r4, r7 // a
-  adc r6, #0
-  adds r11, r11, r5
-  adcs r12, r12, r6
-
-  umull r5, r6, r4, r8 // a
-  adc r6, #0
-  adds r12, r12, r5
-  adcs r14, r14, r6
-
-  umull r5, r6, r4, r9 // a
-  adc r6, #0
-  adds r14, r14, r5
   stmia r0!, {r10-r12,r14}
   ldmia r0, {r10-r12,r14}
-  adcs r10, r10, r6
-
   ldmia r1!, {r6-r9}
-  umull r5, r6, r4, r6
-  adc r6, #0
-  adds r10, r10, r5
-  adcs r11, r11, r6
 
-  umull r5, r6, r4, r7 // a
-  adc r6, #0
-  adds r11, r11, r5
-  adcs r12, r12, r6
+  umaal r10, r5, r4, r6
+  umaal r11, r5, r4, r7
+  umaal r12, r5, r4, r8
+  umaal r14, r5, r4, r9
 
-  umull r5, r6, r4, r8 // a
-  adc r6, #0
-  adds r12, r12, r5
-  adcs r14, r14, r6
-
-  umull r5, r6, r4, r9 // a
-  adc r6, #0
-  adds r14, r14, r5
   stmia r0!, {r10-r12,r14}
   ldmia r0, {r10-r12,r14}
-  adcs r10, r10, r6
-
   ldmia r1!, {r6-r9}
-  umull r5, r6, r4, r6
-  adc r6, #0
-  adds r10, r10, r5
-  adcs r11, r11, r6
 
-  umull r5, r6, r4, r7 // a
-  adc r6, #0
-  adds r11, r11, r5
-  adcs r12, r12, r6
+  umaal r10, r5, r4, r6
+  umaal r11, r5, r4, r7
+  umaal r12, r5, r4, r8
+  umaal r14, r5, r4, r9
 
-  umull r5, r6, r4, r8 // a
-  adc r6, #0
-  adds r12, r12, r5
-  adcs r14, r14, r6
-
-  umull r5, r6, r4, r9 // a
-  adc r6, #0
-  adds r14, r14, r5
   stmia r0!, {r10-r12,r14}
   ldmia r0, {r10-r12,r14}
-  adcs r10, r10, r6
-
   ldmia r1!, {r6-r9}
-  umull r5, r6, r4, r6
-  adc r6, #0
-  adds r10, r10, r5
-  adcs r11, r11, r6
 
-  umull r5, r6, r4, r7 // a
-  adc r6, #0
-  adds r11, r11, r5
-  adcs r12, r12, r6
-
-  umull r5, r6, r4, r8 // a
-  adc r6, #0
-  adds r12, r12, r5
-  adcs r14, r14, r6
-
-  umull r5, r4, r4, r9 // a
-  adc r4, r4, r3
-  adds r14, r14, r5
+  umaal r10, r5, r4, r6
+  umaal r11, r5, r4, r7
+  umaal r12, r5, r4, r8
+  umaal r14, r5, r4, r9
   stmia r0!, {r10-r12,r14}
+
+  add r5, r5, r3
   mov r3, #0
+
+  ldr r6, [r0]
+  adds r6, r6, r5
+  adcs r3, #0 // Carry overflow handle
+  str r6, [r0]
 .endm
 
 .global mmul
@@ -400,125 +257,73 @@ mmul:
   push {r3}
   mov r3, #0
   stepp2
-  ldr r5, [r0]
-  adcs r5, r5, r4
-  adcs r3, #0 // Carry overflow handle
-  str r5, [r0]
-
-  // sub r0, #124
-  sub r0, #60
-  sub r1, #64
-  stepp2
-  ldr r5, [r0]
-  adcs r5, r5, r4
-  adcs r3, #0 // Carry overflow handle
-  str r5, [r0]
 
   sub r0, #60
   sub r1, #64
   stepp2
-  ldr r5, [r0]
-  adcs r5, r5, r4
-  adcs r3, #0 // Carry overflow handle
-  str r5, [r0]
 
   sub r0, #60
   sub r1, #64
   stepp2
-  ldr r5, [r0]
-  adcs r5, r5, r4
-  adcs r3, #0 // Carry overflow handle
-  str r5, [r0]
 
   sub r0, #60
   sub r1, #64
   stepp2
-  ldr r5, [r0]
-  adcs r5, r5, r4
-  adcs r3, #0 // Carry overflow handle
-  str r5, [r0]
 
   sub r0, #60
   sub r1, #64
   stepp2
-  ldr r5, [r0]
-  adcs r5, r5, r4
-  adcs r3, #0 // Carry overflow handle
-  str r5, [r0]
 
   sub r0, #60
   sub r1, #64
   stepp2
-  ldr r5, [r0]
-  adcs r5, r5, r4
-  adcs r3, #0 // Carry overflow handle
-  str r5, [r0]
 
   sub r0, #60
   sub r1, #64
   stepp2
-  ldr r5, [r0]
-  adcs r5, r5, r4
-  adcs r3, #0 // Carry overflow handle
-  str r5, [r0]
 
   sub r0, #60
   sub r1, #64
   stepp2
-  ldr r5, [r0]
-  adcs r5, r5, r4
-  adcs r3, #0 // Carry overflow handle
-  str r5, [r0]
 
   sub r0, #60
   sub r1, #64
   stepp2
-  ldr r5, [r0]
-  adcs r5, r5, r4
-  adcs r3, #0 // Carry overflow handle
-  str r5, [r0]
 
   sub r0, #60
   sub r1, #64
   stepp2
-  ldr r5, [r0]
-  adcs r5, r5, r4
-  adcs r3, #0 // Carry overflow handle
-  str r5, [r0]
 
   sub r0, #60
   sub r1, #64
   stepp2
-  ldr r5, [r0]
-  adcs r5, r5, r4
-  adcs r3, #0 // Carry overflow handle
-  str r5, [r0]
 
   sub r0, #60
   sub r1, #64
   stepp2
-  ldr r5, [r0]
-  adcs r5, r5, r4
-  adcs r3, #0 // Carry overflow handle
-  str r5, [r0]
 
   sub r0, #60
   sub r1, #64
   stepp2
-  ldr r5, [r0]
-  adcs r5, r5, r4
-  adcs r3, #0 // Carry overflow handle
-  str r5, [r0]
 
   sub r0, #60
   sub r1, #64
   stepp2
-  ldmia r0, {r5-r6}
-  adcs r5, r5, r4
-  adcs r6, #0
-  stmia r0!, {r5-r6}
 
-  sub r0, #68
+  sub r0, #60
+  sub r1, #64
+  stepp2
+
+  ldr r6, [r0, #4]
+  adc r6, r6, r3
+  str r6, [r0, #4]
+
+  // ldmia r0, {r5-r6}
+  // adcs r5, r5, r4
+  // adcs r6, #0
+  // stmia r0!, {r5-r6}
+
+  sub r0, #60
   sub r1, #64
 
   // Last pass
@@ -530,93 +335,40 @@ mmul:
   mul r4, r10, r2 // u
   // Lock r0-r4
 
-  umull r5, r6, r4, r6 // a
-  adds r10, r10, r5
-  adcs r11, r11, r6
+  mov r5, #0
+  umaal r10, r5, r4, r6
+  umaal r11, r5, r4, r7
+  umaal r12, r5, r4, r8
+  umaal r14, r5, r4, r9
 
-  umull r5, r6, r4, r7 // a
-  adc r6, #0
-  adds r11, r11, r5
-  adcs r12, r12, r6
-
-  umull r5, r6, r4, r8 // a
-  adc r6, #0
-  adds r12, r12, r5
-  adcs r14, r14, r6
-
-  umull r5, r6, r4, r9 // a
-  adc r6, #0
-  adds r14, r14, r5
   stmia r3!, {r11-r12,r14}
   ldmia r0!, {r10-r12,r14}
-  adcs r10, r10, r6
-
   ldmia r1!, {r6-r9}
-  umull r5, r6, r4, r6
-  adc r6, #0
-  adds r10, r10, r5
-  adcs r11, r11, r6
 
-  umull r5, r6, r4, r7 // a
-  adc r6, #0
-  adds r11, r11, r5
-  adcs r12, r12, r6
+  umaal r10, r5, r4, r6
+  umaal r11, r5, r4, r7
+  umaal r12, r5, r4, r8
+  umaal r14, r5, r4, r9
 
-  umull r5, r6, r4, r8 // a
-  adc r6, #0
-  adds r12, r12, r5
-  adcs r14, r14, r6
-
-  umull r5, r6, r4, r9 // a
-  adc r6, #0
-  adds r14, r14, r5
   stmia r3!, {r10-r12,r14}
   ldmia r0!, {r10-r12,r14}
-  adcs r10, r10, r6
-
   ldmia r1!, {r6-r9}
-  umull r5, r6, r4, r6
-  adc r6, #0
-  adds r10, r10, r5
-  adcs r11, r11, r6
 
-  umull r5, r6, r4, r7 // a
-  adc r6, #0
-  adds r11, r11, r5
-  adcs r12, r12, r6
+  umaal r10, r5, r4, r6
+  umaal r11, r5, r4, r7
+  umaal r12, r5, r4, r8
+  umaal r14, r5, r4, r9
 
-  umull r5, r6, r4, r8 // a
-  adc r6, #0
-  adds r12, r12, r5
-  adcs r14, r14, r6
-
-  umull r5, r6, r4, r9 // a
-  adc r6, #0
-  adds r14, r14, r5
   stmia r3!, {r10-r12,r14}
   ldmia r0!, {r2,r10-r12,r14}
-  adcs r2, r2, r6
-
   ldmia r1!, {r6-r9}
-  umull r5, r6, r4, r6
-  adc r6, #0
-  adds r2, r2, r5
-  adcs r10, r10, r6
 
-  umull r5, r6, r4, r7 // a
-  adc r6, #0
-  adds r10, r10, r5
-  adcs r11, r11, r6
+  umaal r2, r5, r4, r6
+  umaal r10, r5, r4, r7
+  umaal r11, r5, r4, r8
+  umaal r12, r5, r4, r9
 
-  umull r5, r6, r4, r8 // a
-  adc r6, #0
-  adds r11, r11, r5
-  adcs r12, r12, r6
-
-  umull r5, r4, r4, r9 // a
-  adc r4, #0
-  adds r12, r12, r5
-  adcs r14, r14, r4
+  adds r14, r14, r5
   stmia r3!, {r2,r10-r12,r14}
 
   pop {r4-r12,r14}

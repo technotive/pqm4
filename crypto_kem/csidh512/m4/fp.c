@@ -7,30 +7,6 @@
 #include "fp.h"
 #include "rng.h"
 
-static uint64_t ctr = 0;
-
-static void printbytes(const unsigned char *x, unsigned long long xlen)
-{
-  char o[2*xlen+3];
-  o[0] = '0';
-  o[1] = 'x';
-  char * outs = &o[2];
-  unsigned long long i;
-  for(i=0;i<xlen;i++)
-    sprintf(outs+2*i, "%02x", x[(xlen-1)-i]); // Reverse print for sage.
-  outs[2*xlen] = 0;
-  send_USART_str((unsigned char *)o);
-}
-
-bool m4_add_overflow(uint32_t a, uint32_t b, uint32_t* result) {
-  (*result) = a+b;
-  return (b > (UINT32_MAX - a));
-}
-bool m4_sub_overflow(uint32_t a, uint32_t b, uint32_t* result){
-  (*result) = a-b;
-  return (b > a);
-}
-
 void fp_set(fp *x, uint32_t y)
 {
     uint_set((uint *) x, y);
@@ -101,7 +77,16 @@ void fp_mul2(fp *x, fp const *y)
 
 void fp_sq2(fp *x, fp const *y)
 {
-    fp_mul3(x, y, y);
+  uint32_t t[32];
+  m4sqr512(t, (uint32_t*)&y->c);
+
+  //Now we have to reduce t so that it fits in x.
+  //prime p of size n
+  //big number t of size 2n
+
+  mmul(t, &prime.c, inv_min_p_mod_r, &x->c);
+
+  reduce_once((uint*)x);
 }
 
 void fp_sq1(fp *x)
